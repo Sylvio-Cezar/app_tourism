@@ -3,8 +3,21 @@ import 'screens/home_screen.dart';
 
 void main() => runApp(const BrasaTourApp());
 
-class BrasaTourApp extends StatelessWidget {
+class BrasaTourApp extends StatefulWidget {
   const BrasaTourApp({super.key});
+
+  @override
+  State<BrasaTourApp> createState() => _BrasaTourAppState();
+}
+
+class _BrasaTourAppState extends State<BrasaTourApp> {
+  bool isDarkMode = false;
+
+  void toggleTheme() {
+    setState(() {
+      isDarkMode = !isDarkMode;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +40,25 @@ class BrasaTourApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const HomeScreen(),
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.purple,
+          brightness: Brightness.dark,
+          primary: Colors.purple.shade600,
+        ),
+        appBarTheme: const AppBarTheme(
+          centerTitle: true,
+        ),
+        cardTheme: CardTheme(
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+      home: HomeScreen(onThemeToggle: toggleTheme, isDarkMode: isDarkMode),
     );
   }
 }

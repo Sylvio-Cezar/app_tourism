@@ -1,154 +1,82 @@
-import 'package:app_tourism/screens/custom_footer.dart';
-import 'package:app_tourism/screens/custom_header.dart';
+import 'package:app_tourism/widgets/custom_footer.dart';
+import 'package:app_tourism/widgets/custom_header.dart';
 import 'package:flutter/material.dart';
-import 'details_screen.dart';
+import 'favorites_screen.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  final VoidCallback onThemeToggle;
+  final bool isDarkMode;
 
-  final List<Map<String, dynamic>> touristSpots = const [
-    {
-      'name': 'Cristo Redentor',
-      'location': 'Rio de Janeiro',
-      'description': 'Símbolo do Brasil no topo do Corcovado',
-      'image': 'assets/christ.jpg',
-      'rating': 4.9,
-    },
-    {
-      'name': 'Pelourinho',
-      'location': 'Salvador',
-      'description': 'Patrimônio histórico da cultura afro-brasileira',
-      'image': 'assets/pelourinho.jpg',
-      'rating': 4.7,
-    },
-  ];
+  const HomeScreen({
+    super.key,
+    required this.onThemeToggle,
+    required this.isDarkMode,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomHeader(),
+      appBar: CustomHeader(
+        onThemeToggle: onThemeToggle,
+        isDarkMode: isDarkMode,
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(12),
-        child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 12,
-            childAspectRatio: 0.8,
-          ),
-          itemCount: touristSpots.length,
-          itemBuilder: (context, index) {
-            final spot = touristSpots[index];
-            return GestureDetector(
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DetailsScreen(spot: spot),
-                ),
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.asset(
+                'assets/logo.png',
+                height: 200,
+                width: 200,
+                fit: BoxFit.cover,
               ),
-              child: Hero(
-                tag: spot['name'],
-                child: Material(
-                  elevation: 2,
-                  borderRadius: BorderRadius.circular(12),
-                  child: Stack(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.asset(
-                          spot['image'],
-                          fit: BoxFit.cover,
-                          height: double.infinity,
-                          width: double.infinity,
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.only(
-                              bottomLeft: Radius.circular(12),
-                              bottomRight: Radius.circular(12),
-                            ),
-                            gradient: LinearGradient(
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter,
-                              colors: [
-                                Colors.black.withOpacity(0.7),
-                                Colors.transparent,
-                              ],
-                            ),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                spot['name'],
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge
-                                    ?.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                              ),
-                              const SizedBox(height: 4),
-                              Row(
-                                children: [
-                                  const Icon(Icons.location_on, 
-                                    color: Colors.white70, 
-                                    size: 16),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    spot['location'],
-                                    style: const TextStyle(
-                                      color: Colors.white70,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        top: 8,
-                        right: 8,
-                        child: Chip(
-                          backgroundColor: Colors.purple.shade100,
-                          label: Row(
-                            children: [
-                              Text(
-                                spot['rating'].toString(),
-                                style: TextStyle(
-                                  color: Colors.purple.shade900,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Icon(
-                                Icons.star,
-                                color: Colors.purple.shade900,
-                                size: 16,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Bem-vindo ao BrasaTour!',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
               ),
-            );
-          },
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              'Descubra os melhores pontos turísticos do Brasil.',
+              style: TextStyle(
+                fontSize: 16,
+                fontStyle: FontStyle.italic,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 30),
+            FilledButton(
+              onPressed: () {
+                // Ação ao clicar no botão
+              },
+              style: FilledButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Prosseguir'),
+            ),
+          ],
         ),
       ),
       bottomNavigationBar: const CustomFooter(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => FavoritesScreen(
+              onThemeToggle: onThemeToggle,
+              isDarkMode: isDarkMode,
+            ),
+          ),
+        ),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
         child: const Icon(Icons.favorite_border),

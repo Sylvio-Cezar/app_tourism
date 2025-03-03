@@ -10,30 +10,21 @@ class CustomFooter extends StatelessWidget {
       color: Theme.of(context).colorScheme.primary,
       padding: const EdgeInsets.all(16),
       child: const Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'Contato: contato@brasatour.com',
+                '© 2024 BrasaTour',
                 style: TextStyle(color: Colors.white, fontSize: 12),
               ),
               Text(
-                '© 2024 BrasaTour',
+                ' Todos os direitos reservados',
                 style: TextStyle(color: Colors.white70, fontSize: 10),
               ),
             ],
           ),
-          Row(
-            children: [
-              Icon(Icons.thumb_up, color: Colors.white, size: 20), // Facebook
-              SizedBox(width: 12),
-              Icon(Icons.camera_alt, color: Colors.white, size: 20), // Instagram
-              SizedBox(width: 12),
-              Icon(Icons.email, color: Colors.white, size: 20),
-            ],
-          )
         ],
       ),
     );

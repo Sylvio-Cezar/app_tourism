@@ -1,27 +1,58 @@
-import 'package:app_tourism/screens/custom_footer.dart';
-import 'package:app_tourism/screens/custom_header.dart';
+import 'package:app_tourism/widgets/custom_footer.dart';
+import 'package:app_tourism/widgets/custom_header.dart';
 import 'package:flutter/material.dart';
 
 class DetailsScreen extends StatelessWidget {
   final Map<String, dynamic> spot;
-  const DetailsScreen({super.key, required this.spot});
+  final VoidCallback onThemeToggle;
+  final bool isDarkMode;
+
+  const DetailsScreen({
+    super.key,
+    required this.spot,
+    required this.onThemeToggle,
+    required this.isDarkMode,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomHeader(),
+      appBar: CustomHeader(
+        onThemeToggle: onThemeToggle,
+        isDarkMode: isDarkMode,
+      ),
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
             expandedHeight: 300,
             flexibleSpace: Hero(
               tag: spot['name'],
-              child: Image.asset(
-                spot['image'],
-                fit: BoxFit.cover,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                ),
+                child: Image.asset(
+                  spot['image'],
+                  fit: BoxFit.cover,
+                  height: double.infinity,
+                  width: double.infinity,
+                ),
               ),
             ),
             pinned: true,
+            leading: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CircleAvatar(
+                backgroundColor: Theme.of(context).colorScheme.surface.withOpacity(0.7),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ),
+            ),
             actions: [
               IconButton(
                 icon: const Icon(Icons.share),
