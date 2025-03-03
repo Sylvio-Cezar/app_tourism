@@ -2,8 +2,9 @@ import 'package:app_tourism/widgets/custom_footer.dart';
 import 'package:app_tourism/widgets/custom_header.dart';
 import 'package:flutter/material.dart';
 import 'favorites_screen.dart';
+import 'states_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   final VoidCallback onThemeToggle;
   final bool isDarkMode;
 
@@ -14,11 +15,16 @@ class HomeScreen extends StatelessWidget {
   });
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomHeader(
-        onThemeToggle: onThemeToggle,
-        isDarkMode: isDarkMode,
+        onThemeToggle: widget.onThemeToggle,
+        isDarkMode: widget.isDarkMode,
       ),
       body: Padding(
         padding: const EdgeInsets.all(24),
@@ -37,26 +43,26 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 20),
             const Text(
               'Bem-vindo ao BrasaTour!',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 10),
             const Text(
               'Descubra os melhores pontos turísticos do Brasil.',
-              style: TextStyle(
-                fontSize: 16,
-                fontStyle: FontStyle.italic,
-              ),
+              style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 30),
             FilledButton(
-              onPressed: () {
-                // Ação ao clicar no botão
-              },
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => StatesScreen(
+                    onThemeToggle: widget.onThemeToggle,
+                    isDarkMode: widget.isDarkMode,
+                  ),
+                ),
+              ),
               style: FilledButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 foregroundColor: Colors.white,
@@ -68,15 +74,17 @@ class HomeScreen extends StatelessWidget {
       ),
       bottomNavigationBar: const CustomFooter(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => FavoritesScreen(
-              onThemeToggle: onThemeToggle,
-              isDarkMode: isDarkMode,
+        onPressed:
+            () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder:
+                    (context) => FavoritesScreen(
+                      onThemeToggle: widget.onThemeToggle,
+                      isDarkMode: widget.isDarkMode,
+                    ),
+              ),
             ),
-          ),
-        ),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
         child: const Icon(Icons.favorite_border),

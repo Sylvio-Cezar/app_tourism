@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
 
-void main() => runApp(const BrasaTourApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const BrasaTourApp());
+}
 
 class BrasaTourApp extends StatefulWidget {
   const BrasaTourApp({super.key});
@@ -23,6 +26,7 @@ class _BrasaTourAppState extends State<BrasaTourApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'BrasaTour',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(

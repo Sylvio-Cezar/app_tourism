@@ -28,14 +28,20 @@ class DetailsScreen extends StatelessWidget {
             flexibleSpace: Hero(
               tag: spot['name'],
               child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                ),
+                decoration: BoxDecoration(color: Colors.grey[300]),
                 child: Image.asset(
                   spot['image'],
                   fit: BoxFit.cover,
                   height: double.infinity,
                   width: double.infinity,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Image.network(
+                      'https://via.placeholder.com/300',
+                      fit: BoxFit.cover,
+                      height: double.infinity,
+                      width: double.infinity,
+                    );
+                  },
                 ),
               ),
             ),
@@ -43,7 +49,9 @@ class DetailsScreen extends StatelessWidget {
             leading: Padding(
               padding: const EdgeInsets.all(8.0),
               child: CircleAvatar(
-                backgroundColor: Theme.of(context).colorScheme.surface.withOpacity(0.7),
+                backgroundColor: Theme.of(
+                  context,
+                ).colorScheme.surface.withAlpha((0.7 * 255).round()),
                 child: IconButton(
                   icon: Icon(
                     Icons.arrow_back,
@@ -54,10 +62,7 @@ class DetailsScreen extends StatelessWidget {
               ),
             ),
             actions: [
-              IconButton(
-                icon: const Icon(Icons.share),
-                onPressed: () {},
-              ),
+              IconButton(icon: const Icon(Icons.share), onPressed: () {}),
             ],
           ),
           SliverToBoxAdapter(
@@ -69,8 +74,8 @@ class DetailsScreen extends StatelessWidget {
                   Text(
                     spot['name'],
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   Row(
@@ -90,8 +95,8 @@ class DetailsScreen extends StatelessWidget {
                   Text(
                     'Sobre',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
