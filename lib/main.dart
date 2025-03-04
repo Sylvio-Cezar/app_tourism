@@ -1,26 +1,24 @@
 import 'package:flutter/material.dart';
-import 'screens/home_screen.dart';
+import 'package:provider/provider.dart';
+import 'screens/splash_screen.dart';
+import 'providers/favorites_provider.dart';
+import 'providers/theme_provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const BrasaTourApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => FavoritesProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+      ],
+      child: const BrasaTourApp(),
+    ),
+  );
 }
 
-class BrasaTourApp extends StatefulWidget {
+class BrasaTourApp extends StatelessWidget {
   const BrasaTourApp({super.key});
-
-  @override
-  State<BrasaTourApp> createState() => _BrasaTourAppState();
-}
-
-class _BrasaTourAppState extends State<BrasaTourApp> {
-  bool isDarkMode = false;
-
-  void toggleTheme() {
-    setState(() {
-      isDarkMode = !isDarkMode;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,9 +49,7 @@ class _BrasaTourAppState extends State<BrasaTourApp> {
           brightness: Brightness.dark,
           primary: Colors.purple.shade600,
         ),
-        appBarTheme: const AppBarTheme(
-          centerTitle: true,
-        ),
+        appBarTheme: const AppBarTheme(centerTitle: true),
         cardTheme: CardTheme(
           elevation: 2,
           shape: RoundedRectangleBorder(
@@ -61,8 +57,11 @@ class _BrasaTourAppState extends State<BrasaTourApp> {
           ),
         ),
       ),
-      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      home: HomeScreen(onThemeToggle: toggleTheme, isDarkMode: isDarkMode),
+      themeMode:
+          context.watch<ThemeProvider>().isDarkMode
+              ? ThemeMode.dark
+              : ThemeMode.light,
+      home: const SplashScreen(),
     );
   }
 }

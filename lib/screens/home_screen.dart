@@ -3,36 +3,22 @@ import 'package:app_tourism/widgets/custom_header.dart';
 import 'package:flutter/material.dart';
 import 'favorites_screen.dart';
 import 'states_screen.dart';
+import '../utils/page_transitions.dart';
 
-class HomeScreen extends StatefulWidget {
-  final VoidCallback onThemeToggle;
-  final bool isDarkMode;
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
 
-  const HomeScreen({
-    super.key,
-    required this.onThemeToggle,
-    required this.isDarkMode,
-  });
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomHeader(
-        onThemeToggle: widget.onThemeToggle,
-        isDarkMode: widget.isDarkMode,
-      ),
+      appBar: const CustomHeader(),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(20),
               child: Image.asset(
                 'assets/logo.png',
                 height: 200,
@@ -53,21 +39,21 @@ class _HomeScreenState extends State<HomeScreen> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 30),
-            FilledButton(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => StatesScreen(
-                    onThemeToggle: widget.onThemeToggle,
-                    isDarkMode: widget.isDarkMode,
-                  ),
-                ),
+            FilledButton.icon(
+              label: const Text(
+                'Prosseguir',
+                style: TextStyle(color: Colors.white),
               ),
+              onPressed:
+                  () => Navigator.push(
+                    context,
+                    FadePageRoute(child: StatesScreen()),
+                  ),
               style: FilledButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
-                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                minimumSize: const Size.fromHeight(50),
               ),
-              child: const Text('Prosseguir'),
             ),
           ],
         ),
@@ -77,17 +63,11 @@ class _HomeScreenState extends State<HomeScreen> {
         onPressed:
             () => Navigator.push(
               context,
-              MaterialPageRoute(
-                builder:
-                    (context) => FavoritesScreen(
-                      onThemeToggle: widget.onThemeToggle,
-                      isDarkMode: widget.isDarkMode,
-                    ),
-              ),
+              FadePageRoute(child: const FavoritesScreen()),
             ),
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
-        child: const Icon(Icons.favorite_border),
+        child: const Icon(Icons.favorite),
       ),
     );
   }

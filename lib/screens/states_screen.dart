@@ -2,16 +2,10 @@ import 'package:flutter/material.dart';
 import '../widgets/custom_header.dart';
 import '../widgets/custom_footer.dart';
 import 'tourist_spots_screen.dart';
+import '../utils/page_transitions.dart';
 
 class StatesScreen extends StatelessWidget {
-  final VoidCallback onThemeToggle;
-  final bool isDarkMode;
-
-  const StatesScreen({
-    super.key,
-    required this.onThemeToggle,
-    required this.isDarkMode,
-  });
+  const StatesScreen({super.key});
 
   final List<Map<String, String>> brazilianStates = const [
     {'name': 'Acre', 'capital': 'Rio Branco'},
@@ -46,10 +40,7 @@ class StatesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomHeader(
-        onThemeToggle: onThemeToggle,
-        isDarkMode: isDarkMode,
-      ),
+      appBar: CustomHeader(showBackButton: true),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -70,27 +61,52 @@ class StatesScreen extends StatelessWidget {
                 itemCount: brazilianStates.length,
                 itemBuilder: (context, index) {
                   final state = brazilianStates[index];
-                  return Card(
-                    margin: const EdgeInsets.only(bottom: 8),
-                    child: ListTile(
-                      title: Text(state['name']!),
-                      subtitle: Text('Capital: ${state['capital']}'),
-                      trailing: const Icon(Icons.arrow_forward_ios),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder:
-                                (context) => TouristSpotsScreen(
-                                  stateName: state['name']!,
-                                  capital: state['capital']!,
-                                  onThemeToggle: onThemeToggle,
-                                  isDarkMode: isDarkMode,
-                                ),
-                          ),
-                        );
-                      },
+                  return AnimatedBuilder(
+                    animation: Tween<double>(begin: 0, end: 1).animate(
+                      CurvedAnimation(
+                        parent: ModalRoute.of(context)!.animation!,
+                        curve: Interval(
+                          index * 0.1,
+                          1.0,
+                          curve: Curves.easeOut,
+                        ),
+                      ),
                     ),
+                    builder:
+                        (context, child) => SlideTransition(
+                          position: Tween<Offset>(
+                            begin: const Offset(1, 0),
+                            end: Offset.zero,
+                          ).animate(
+                            CurvedAnimation(
+                              parent: ModalRoute.of(context)!.animation!,
+                              curve: Interval(
+                                index * 0.1,
+                                1.0,
+                                curve: Curves.easeOut,
+                              ),
+                            ),
+                          ),
+                          child: Card(
+                            margin: const EdgeInsets.only(bottom: 8),
+                            child: ListTile(
+                              title: Text(state['name']!),
+                              subtitle: Text('Capital: ${state['capital']}'),
+                              trailing: const Icon(Icons.arrow_forward_ios),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  FadePageRoute(
+                                    child: TouristSpotsScreen(
+                                      stateName: state['name']!,
+                                      capital: state['capital']!,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
                   );
                 },
               ),

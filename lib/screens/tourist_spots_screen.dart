@@ -4,19 +4,16 @@ import '../widgets/custom_footer.dart';
 import '../services/tourist_spots_service.dart';
 import '../models/tourist_spot.dart';
 import 'details_screen.dart';
+import '../utils/page_transitions.dart';
 
 class TouristSpotsScreen extends StatefulWidget {
   final String stateName;
   final String capital;
-  final VoidCallback onThemeToggle;
-  final bool isDarkMode;
 
   const TouristSpotsScreen({
     super.key,
     required this.stateName,
     required this.capital,
-    required this.onThemeToggle,
-    required this.isDarkMode,
   });
 
   @override
@@ -58,10 +55,7 @@ class _TouristSpotsScreenState extends State<TouristSpotsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomHeader(
-        onThemeToggle: widget.onThemeToggle,
-        isDarkMode: widget.isDarkMode,
-      ),
+      appBar: CustomHeader(showBackButton: true),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -115,18 +109,24 @@ class _TouristSpotsScreenState extends State<TouristSpotsScreen> {
                     itemCount: _spots.length,
                     itemBuilder: (context, index) {
                       final spot = _spots[index];
-                      return Card(
-                        margin: const EdgeInsets.only(bottom: 8),
-                        child: ListTile(
-                          title: Text(spot.name),
-                          subtitle: Text(spot.type),
-                          trailing: const Icon(Icons.arrow_forward_ios),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) => DetailsScreen(
+                      return AnimatedScale(
+                        scale: 1.0,
+                        duration: const Duration(milliseconds: 300),
+                        child: AnimatedOpacity(
+                          opacity: 1.0,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                          child: Card(
+                            margin: const EdgeInsets.only(bottom: 8),
+                            child: ListTile(
+                              title: Text(spot.name),
+                              subtitle: Text(spot.type),
+                              trailing: const Icon(Icons.arrow_forward_ios),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  FadePageRoute(
+                                    child: DetailsScreen(
                                       spot: {
                                         'name': spot.name,
                                         'location':
@@ -136,12 +136,12 @@ class _TouristSpotsScreenState extends State<TouristSpotsScreen> {
                                             'Sem descrição disponível.',
                                         'image': 'assets/placeholder.png',
                                       },
-                                      onThemeToggle: widget.onThemeToggle,
-                                      isDarkMode: widget.isDarkMode,
                                     ),
-                              ),
-                            );
-                          },
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
                         ),
                       );
                     },

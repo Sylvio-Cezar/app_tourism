@@ -1,24 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/theme_provider.dart';
 
 class CustomHeader extends StatelessWidget implements PreferredSizeWidget {
-  final VoidCallback onThemeToggle;
-  final bool isDarkMode;
+  final bool showBackButton;
 
-  const CustomHeader({
-    super.key,
-    required this.onThemeToggle,
-    required this.isDarkMode,
-  });
+  const CustomHeader({super.key, this.showBackButton = false});
 
   @override
-  Size get preferredSize => const Size.fromHeight(80);
+  Size get preferredSize => const Size.fromHeight(70);
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return AppBar(
       automaticallyImplyLeading: false,
+      leading:
+          showBackButton
+              ? IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () => Navigator.pop(context),
+              )
+              : null,
       title: Padding(
-        padding: const EdgeInsets.only(left: 60, top: 10),
+        padding: EdgeInsets.only(left: showBackButton ? 0 : 60),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -26,6 +32,7 @@ class CustomHeader extends StatelessWidget implements PreferredSizeWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: const [
+                  SizedBox(height: 10),
                   Text(
                     'BrasaTour',
                     style: TextStyle(
@@ -51,12 +58,11 @@ class CustomHeader extends StatelessWidget implements PreferredSizeWidget {
       actions: [
         IconButton(
           icon: Icon(
-            isDarkMode ? Icons.light_mode : Icons.dark_mode,
+            themeProvider.isDarkMode ? Icons.light_mode : Icons.dark_mode,
             color: Colors.white,
           ),
-          onPressed: onThemeToggle,
+          onPressed: themeProvider.toggleTheme,
         ),
-        const SizedBox(width: 8),
       ],
       backgroundColor: Theme.of(context).colorScheme.primary,
     );

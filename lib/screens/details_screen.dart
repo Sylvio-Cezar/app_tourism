@@ -1,26 +1,20 @@
 import 'package:app_tourism/widgets/custom_footer.dart';
 import 'package:app_tourism/widgets/custom_header.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/favorites_provider.dart';
 
 class DetailsScreen extends StatelessWidget {
   final Map<String, dynamic> spot;
-  final VoidCallback onThemeToggle;
-  final bool isDarkMode;
 
-  const DetailsScreen({
-    super.key,
-    required this.spot,
-    required this.onThemeToggle,
-    required this.isDarkMode,
-  });
+  const DetailsScreen({super.key, required this.spot});
 
   @override
   Widget build(BuildContext context) {
+    final favoritesProvider = Provider.of<FavoritesProvider>(context);
+
     return Scaffold(
-      appBar: CustomHeader(
-        onThemeToggle: onThemeToggle,
-        isDarkMode: isDarkMode,
-      ),
+      appBar: CustomHeader(showBackButton: true),
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -28,7 +22,7 @@ class DetailsScreen extends StatelessWidget {
             flexibleSpace: Hero(
               tag: spot['name'],
               child: Container(
-                decoration: BoxDecoration(color: Colors.grey[300]),
+                decoration: BoxDecoration(color: Colors.transparent),
                 child: Image.asset(
                   spot['image'],
                   fit: BoxFit.cover,
@@ -46,24 +40,7 @@ class DetailsScreen extends StatelessWidget {
               ),
             ),
             pinned: true,
-            leading: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CircleAvatar(
-                backgroundColor: Theme.of(
-                  context,
-                ).colorScheme.surface.withAlpha((0.7 * 255).round()),
-                child: IconButton(
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ),
-            ),
-            actions: [
-              IconButton(icon: const Icon(Icons.share), onPressed: () {}),
-            ],
+            automaticallyImplyLeading: false,
           ),
           SliverToBoxAdapter(
             child: Padding(
@@ -107,9 +84,19 @@ class DetailsScreen extends StatelessWidget {
                   SizedBox(
                     width: double.infinity,
                     child: FilledButton.icon(
-                      icon: const Icon(Icons.map),
-                      label: const Text('Ver no Mapa'),
-                      onPressed: () {},
+                      icon: Icon(
+                        favoritesProvider.isFavorite(spot)
+                            ? Icons.favorite
+                            : Icons.favorite_border,
+                        color: Colors.white,
+                      ),
+                      label: Text(
+                        favoritesProvider.isFavorite(spot)
+                            ? 'Remover dos Favoritos'
+                            : 'Adicionar aos Favoritos',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: () => favoritesProvider.toggleFavorite(spot),
                       style: FilledButton.styleFrom(
                         backgroundColor: Theme.of(context).colorScheme.primary,
                         padding: const EdgeInsets.symmetric(vertical: 16),
