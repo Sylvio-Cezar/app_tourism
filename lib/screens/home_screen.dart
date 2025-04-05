@@ -40,6 +40,7 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 30),
             FilledButton.icon(
+              icon: const Icon(Icons.explore, color: Colors.white),
               label: const Text(
                 'Prosseguir',
                 style: TextStyle(color: Colors.white),
@@ -47,7 +48,25 @@ class HomeScreen extends StatelessWidget {
               onPressed:
                   () => Navigator.push(
                     context,
-                    FadePageRoute(child: StatesScreen()),
+                    FadePageRoute(child: const StatesScreen()),
+                  ),
+              style: FilledButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                minimumSize: const Size.fromHeight(50),
+              ),
+            ),
+            const SizedBox(height: 16),
+            FilledButton.icon(
+              icon: const Icon(Icons.favorite, color: Colors.white),
+              label: const Text(
+                'Meus Favoritos',
+                style: TextStyle(color: Colors.white),
+              ),
+              onPressed:
+                  () => Navigator.push(
+                    context,
+                    FadePageRoute(child: const FavoritesScreen()),
                   ),
               style: FilledButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
@@ -59,16 +78,6 @@ class HomeScreen extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: const CustomFooter(),
-      floatingActionButton: FloatingActionButton(
-        onPressed:
-            () => Navigator.push(
-              context,
-              FadePageRoute(child: const FavoritesScreen()),
-            ),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        foregroundColor: Colors.white,
-        child: const Icon(Icons.favorite),
-      ),
     );
   }
 }

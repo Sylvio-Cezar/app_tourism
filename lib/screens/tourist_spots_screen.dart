@@ -55,22 +55,16 @@ class _TouristSpotsScreenState extends State<TouristSpotsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomHeader(showBackButton: true),
+      appBar: CustomHeader(
+        showBackButton: true,
+        title: widget.capital,
+        subtitle: 'Capital de ${widget.stateName}',
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Pontos Turísticos - ${widget.stateName}',
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Capital: ${widget.capital}',
-              style: const TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-            const SizedBox(height: 16),
             if (_isLoading)
               const Center(child: CircularProgressIndicator())
             else if (_error.isNotEmpty)
@@ -105,7 +99,14 @@ class _TouristSpotsScreenState extends State<TouristSpotsScreen> {
               Expanded(
                 child: RefreshIndicator(
                   onRefresh: _loadTouristSpots,
-                  child: ListView.builder(
+                  child: GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 0.8,
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                        ),
                     itemCount: _spots.length,
                     itemBuilder: (context, index) {
                       final spot = _spots[index];
@@ -116,30 +117,91 @@ class _TouristSpotsScreenState extends State<TouristSpotsScreen> {
                           opacity: 1.0,
                           duration: const Duration(milliseconds: 300),
                           curve: Curves.easeInOut,
-                          child: Card(
-                            margin: const EdgeInsets.only(bottom: 8),
-                            child: ListTile(
-                              title: Text(spot.name),
-                              subtitle: Text(spot.type),
-                              trailing: const Icon(Icons.arrow_forward_ios),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  FadePageRoute(
-                                    child: DetailsScreen(
-                                      spot: {
-                                        'name': spot.name,
-                                        'location':
-                                            '${spot.latitude}, ${spot.longitude}',
-                                        'description':
-                                            spot.tags['description'] ??
-                                            'Sem descrição disponível.',
-                                        'image': 'assets/placeholder.png',
-                                      },
-                                    ),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                FadePageRoute(
+                                  child: DetailsScreen(
+                                    id: spot.id,
+                                    name: spot.name,
+                                    latitude: spot.latitude,
+                                    longitude: spot.longitude,
                                   ),
-                                );
-                              },
+                                ),
+                              );
+                            },
+                            child: Hero(
+                              tag: spot.name,
+                              child: Material(
+                                elevation: 2,
+                                borderRadius: BorderRadius.circular(12),
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(12),
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary.withAlpha(25),
+                                      ),
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.map,
+                                          size: 48,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      bottom: 0,
+                                      left: 0,
+                                      right: 0,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              const BorderRadius.vertical(
+                                                bottom: Radius.circular(12),
+                                              ),
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            colors: [
+                                              Colors.transparent,
+                                              Colors.black.withOpacity(0.7),
+                                            ],
+                                          ),
+                                        ),
+                                        padding: const EdgeInsets.all(12),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              spot.name,
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              spot.type,
+                                              style: const TextStyle(
+                                                color: Colors.white70,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
                         ),

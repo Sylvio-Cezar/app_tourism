@@ -12,8 +12,8 @@ class TouristSpot {
     required this.latitude,
     required this.longitude,
     required this.type,
-    required this.tags,
-  });
+    Map<String, String>? tags,
+  }) : tags = tags ?? {}; // Se tags for null, usa um mapa vazio
 
   factory TouristSpot.fromJson(Map<String, dynamic> json) {
     return TouristSpot(
@@ -22,7 +22,17 @@ class TouristSpot {
       latitude: json['lat'].toDouble(),
       longitude: json['lon'].toDouble(),
       type: json['tags']['tourism'] ?? 'attraction',
-      tags: Map<String, String>.from(json['tags']),
+      tags: Map<String, String>.from(json['tags'] ?? {}),
     );
   }
-} 
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'tags': {'name': name, ...tags},
+      'lat': latitude,
+      'lon': longitude,
+      'type': 'node',
+    };
+  }
+}

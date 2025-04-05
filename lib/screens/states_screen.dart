@@ -40,22 +40,16 @@ class StatesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomHeader(showBackButton: true),
+      appBar: const CustomHeader(
+        showBackButton: true,
+        title: 'Estados do Brasil',
+        subtitle: 'Selecione um estado',
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Estados do Brasil',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Selecione um estado para ver seus pontos turísticos',
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-            const SizedBox(height: 16),
             Expanded(
               child: ListView.builder(
                 itemCount: brazilianStates.length,

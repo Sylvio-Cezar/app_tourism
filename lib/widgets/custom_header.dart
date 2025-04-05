@@ -4,11 +4,15 @@ import '../providers/theme_provider.dart';
 
 class CustomHeader extends StatelessWidget implements PreferredSizeWidget {
   final bool showBackButton;
+  final String? title;
+  final String? subtitle;
 
-  const CustomHeader({super.key, this.showBackButton = false});
-
-  @override
-  Size get preferredSize => const Size.fromHeight(70);
+  const CustomHeader({
+    super.key,
+    this.showBackButton = false,
+    this.title,
+    this.subtitle,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -16,21 +20,39 @@ class CustomHeader extends StatelessWidget implements PreferredSizeWidget {
 
     return AppBar(
       automaticallyImplyLeading: false,
-      leading:
-          showBackButton
-              ? IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.white),
-                onPressed: () => Navigator.pop(context),
-              )
-              : null,
+      leading: showBackButton
+          ? IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () => Navigator.pop(context),
+            )
+          : null,
       title: Padding(
-        padding: EdgeInsets.only(left: showBackButton ? 0 : 60),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        child: title != null
+            ? Column(
+                children: [
+                  const SizedBox(height: 14),
+                  Text(
+                    title!,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  if (subtitle != null) ...[
+                    Text(
+                      subtitle!,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 16,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ],
+                ],
+              )
+            : Column(
                 children: const [
                   SizedBox(height: 10),
                   Text(
@@ -51,9 +73,6 @@ class CustomHeader extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 ],
               ),
-            ),
-          ],
-        ),
       ),
       actions: [
         IconButton(
@@ -67,4 +86,7 @@ class CustomHeader extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Theme.of(context).colorScheme.primary,
     );
   }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(80);
 }

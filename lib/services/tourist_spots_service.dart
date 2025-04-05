@@ -30,10 +30,13 @@ class TouristSpotsService {
         final data = json.decode(decodedResponse);
         final elements = data['elements'] as List;
 
-        final filteredElements = elements.where((element) {
-          final acceptable = element['tags']?['tourism'];
-          return acceptable == 'attraction' || acceptable == 'museum' || acceptable == 'gallery' || acceptable == 'viewpoint' || acceptable == 'zoo' || acceptable == 'theme_park' || acceptable == 'water_park' || acceptable == 'amusement_ride' || acceptable == 'theme_park' || acceptable == 'water_park' || acceptable == 'amusement_ride';
-        }).toList();
+        final filteredElements =
+            elements.where((element) {
+              final acceptable = element['tags']?['tourism'];
+              return acceptable == 'attraction' ||
+                  acceptable == 'museum' ||
+                  acceptable == 'viewpoint';
+            }).toList();
 
         return filteredElements
             .where(
@@ -49,6 +52,37 @@ class TouristSpotsService {
       }
     } catch (e) {
       throw Exception('Erro na requisição: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>> getTouristSpotById(String id) async {
+    final query = '''
+      [out:json];
+      (
+        node($id);
+        way($id);
+        relation($id);
+      );
+      out body;
+      >;
+      out skel qt;
+    ''';
+
+    try {
+      final response = await http.get(
+        Uri.parse('$_overpassUrl?data=${Uri.encodeComponent(query)}'),
+        headers: {'Accept-Charset': 'utf-8'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(utf8.decode(response.bodyBytes));
+        if (data['elements'].isNotEmpty) {
+          return data['elements'][0];
+        }
+      }
+      throw Exception('Ponto turístico não encontrado');
+    } catch (e) {
+      throw Exception('Erro ao carregar detalhes: $e');
     }
   }
 }
