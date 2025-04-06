@@ -36,7 +36,7 @@ class CustomHeader extends StatelessWidget implements PreferredSizeWidget {
                     title!,
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 24,
+                      fontSize: 22,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -45,7 +45,7 @@ class CustomHeader extends StatelessWidget implements PreferredSizeWidget {
                       subtitle!,
                       style: const TextStyle(
                         color: Colors.white70,
-                        fontSize: 16,
+                        fontSize: 14,
                         fontStyle: FontStyle.italic,
                       ),
                     ),
@@ -54,12 +54,12 @@ class CustomHeader extends StatelessWidget implements PreferredSizeWidget {
               )
             : Column(
                 children: const [
-                  SizedBox(height: 10),
+                  SizedBox(height: 14),
                   Text(
                     'BrasaTour',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 24,
+                      fontSize: 22,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -67,7 +67,7 @@ class CustomHeader extends StatelessWidget implements PreferredSizeWidget {
                     'Descubra o Brasil',
                     style: TextStyle(
                       color: Colors.white70,
-                      fontSize: 16,
+                      fontSize: 14,
                       fontStyle: FontStyle.italic,
                     ),
                   ),
