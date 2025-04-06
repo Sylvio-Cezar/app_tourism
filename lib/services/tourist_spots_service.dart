@@ -35,7 +35,16 @@ class TouristSpotsService {
               final acceptable = element['tags']?['tourism'];
               return acceptable == 'attraction' ||
                   acceptable == 'museum' ||
-                  acceptable == 'viewpoint';
+                  acceptable == 'viewpoint' ||
+                  acceptable == 'picnic_site' ||
+                  acceptable == 'hostel' ||
+                  acceptable == 'artwork' ||
+                  acceptable == 'gallery' ||
+                  acceptable == 'zoo' ||
+                  acceptable == 'theme_park' ||
+                  acceptable == 'water_park' ||
+                  acceptable == 'park' ||
+                  acceptable == 'aquarium';
             }).toList();
 
         return filteredElements

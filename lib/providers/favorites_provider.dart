@@ -1,62 +1,88 @@
 import 'package:flutter/foundation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 import '../models/tourist_spot.dart';
 import '../services/tourist_spots_service.dart';
+import '../database/database_helper.dart';
 
 class FavoritesProvider with ChangeNotifier {
   final List<TouristSpot> _favorites = [];
-  static const String _storageKey = 'favorites';
-  late SharedPreferences _prefs;
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
   final _touristSpotsService = TouristSpotsService();
+  bool _isLoading = true;
 
   FavoritesProvider() {
     _loadFavorites();
   }
 
   List<TouristSpot> get favorites => _favorites;
+  bool get isLoading => _isLoading;
 
   Future<void> _loadFavorites() async {
-    _prefs = await SharedPreferences.getInstance();
-    final String? storedFavorites = _prefs.getString(_storageKey);
-
-    if (storedFavorites != null) {
-      final List<dynamic> decoded = json.decode(storedFavorites);
-      _favorites.addAll(
-        decoded.map((item) => TouristSpot.fromJson(item)).toList(),
-      );
+    try {
+      final spots = await _databaseHelper.getAllFavorites();
+      _favorites.clear();
+      _favorites.addAll(spots);
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      print('Erro ao carregar favoritos: $e');
+      _isLoading = false;
       notifyListeners();
     }
   }
 
-  Future<void> _saveFavorites() async {
-    await _prefs.setString(
-      _storageKey,
-      json.encode(_favorites.map((spot) => spot.toJson()).toList()),
-    );
-  }
-
-  bool isFavorite(String id) {
-    return _favorites.any((spot) => spot.id == id);
+  Future<bool> isFavorite(String id) async {
+    return await _databaseHelper.isFavorite(id);
   }
 
   Future<void> toggleFavorite(String id, {TouristSpot? spot}) async {
     try {
-      if (isFavorite(id)) {
+      final isFav = await isFavorite(id);
+
+      if (isFav) {
+        await _databaseHelper.deleteFavorite(id);
         _favorites.removeWhere((favorite) => favorite.id == id);
       } else {
+        final TouristSpot spotToAdd;
         if (spot != null) {
-          _favorites.add(spot);
+          spotToAdd = spot;
         } else {
           final spotDetails = await _touristSpotsService.getTouristSpotById(id);
-          final newSpot = TouristSpot.fromJson(spotDetails);
-          _favorites.add(newSpot);
+          spotToAdd = TouristSpot.fromJson(spotDetails);
         }
+
+        await _databaseHelper.insertFavorite(spotToAdd);
+        _favorites.add(spotToAdd);
       }
-      await _saveFavorites();
+
       notifyListeners();
     } catch (e) {
       print('Erro ao atualizar favoritos: $e');
+    }
+  }
+
+  Future<void> refreshFavorites() async {
+    await _loadFavorites();
+  }
+
+  Future<void> updateFavorite(TouristSpot spot) async {
+    try {
+      await _databaseHelper.updateFavorite(spot);
+      final index = _favorites.indexWhere((f) => f.id == spot.id);
+      if (index != -1) {
+        _favorites[index] = spot;
+        notifyListeners();
+      }
+    } catch (e) {
+      print('Erro ao atualizar favorito: $e');
+    }
+  }
+
+  Future<TouristSpot?> getFavoriteById(String id) async {
+    try {
+      return await _databaseHelper.getFavoriteById(id);
+    } catch (e) {
+      print('Erro ao buscar favorito: $e');
+      return null;
     }
   }
 }

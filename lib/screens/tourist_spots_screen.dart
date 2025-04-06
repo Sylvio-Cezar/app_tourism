@@ -189,7 +189,7 @@ class _TouristSpotsScreenState extends State<TouristSpotsScreen> {
                                             ),
                                             const SizedBox(height: 4),
                                             Text(
-                                              spot.type,
+                                              spot.translatedType,
                                               style: const TextStyle(
                                                 color: Colors.white70,
                                                 fontSize: 12,

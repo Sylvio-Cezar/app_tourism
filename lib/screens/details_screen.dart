@@ -192,25 +192,28 @@ class _DetailsScreenState extends State<DetailsScreen> {
                 ],
               ),
       bottomNavigationBar: const CustomFooter(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          final spot = TouristSpot(
-            id: widget.id,
-            name: widget.name,
-            latitude: widget.latitude,
-            longitude: widget.longitude,
-            type: _spotDetails?['tourism'] ?? 'attraction',
-            tags: Map<String, String>.from(_spotDetails ?? {}),
+      floatingActionButton: FutureBuilder<bool>(
+        future: favoritesProvider.isFavorite(widget.id),
+        builder: (context, snapshot) {
+          return FloatingActionButton(
+            onPressed: () {
+              final spot = TouristSpot(
+                id: widget.id,
+                name: widget.name,
+                latitude: widget.latitude,
+                longitude: widget.longitude,
+                type: _spotDetails?['tourism'] ?? 'attraction',
+                tags: Map<String, String>.from(_spotDetails ?? {}),
+              );
+              favoritesProvider.toggleFavorite(widget.id, spot: spot);
+            },
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            child: Icon(
+              snapshot.data == true ? Icons.favorite : Icons.favorite_border,
+              color: Colors.white,
+            ),
           );
-          favoritesProvider.toggleFavorite(widget.id, spot: spot);
         },
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        child: Icon(
-          favoritesProvider.isFavorite(widget.id)
-              ? Icons.favorite
-              : Icons.favorite_border,
-          color: Colors.white,
-        ),
       ),
     );
   }

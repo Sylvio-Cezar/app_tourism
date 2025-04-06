@@ -35,4 +35,23 @@ class TouristSpot {
       'type': 'node',
     };
   }
+
+  String get translatedType {
+    final translations = {
+      'attraction': 'Atração Turística',
+      'museum': 'Museu',
+      'viewpoint': 'Mirante',
+      'picnic_site': 'Área de Piquenique',
+      'hostel': 'Hostel',
+      'artwork': 'Obra de Arte',
+      'gallery': 'Galeria',
+      'zoo': 'Zoológico',
+      'theme_park': 'Parque Temático',
+      'water_park': 'Parque Aquático',
+      'park': 'Parque',
+      'aquarium': 'Aquário',
+    };
+
+    return translations[type] ?? 'Ponto Turístico';
+  }
 }
