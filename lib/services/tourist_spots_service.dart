@@ -8,7 +8,7 @@ class TouristSpotsService {
   Future<List<TouristSpot>> getTouristSpots(String cityName) async {
     final encodedQuery = Uri.encodeComponent('''
       [out:json];
-      area["name"="$cityName"]["admin_level"="8"]->.searchArea;
+      area["name"="$cityName"]["admin_level"~"8|6"]->.searchArea;
       (
         node["tourism"](area.searchArea);
         way["tourism"](area.searchArea);

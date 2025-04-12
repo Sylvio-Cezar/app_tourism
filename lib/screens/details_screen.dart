@@ -61,19 +61,19 @@ class _DetailsScreenState extends State<DetailsScreen> {
 
     return Scaffold(
       appBar: CustomHeader(showBackButton: true, title: widget.name),
-      body:
-          _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : _error.isNotEmpty
-              ? Center(child: Text(_error))
-              : CustomScrollView(
+      body: Center(
+        child: _isLoading
+            ? const CircularProgressIndicator()
+            : _error.isNotEmpty
+            ? Text(_error, textAlign: TextAlign.center)
+            : CustomScrollView(
                 slivers: [
-                  SliverAppBar(
-                    expandedHeight: 400,
-                    flexibleSpace: Hero(
+                  SliverToBoxAdapter(
+                    child: Hero(
                       tag: widget.name,
                       child: Container(
                         padding: const EdgeInsets.all(20),
+                        height: 400,
                         child: Center(
                           child: AspectRatio(
                             aspectRatio: 1,
@@ -119,8 +119,6 @@ class _DetailsScreenState extends State<DetailsScreen> {
                         ),
                       ),
                     ),
-                    pinned: true,
-                    automaticallyImplyLeading: false,
                   ),
                   SliverToBoxAdapter(
                     child: Padding(
@@ -128,10 +126,13 @@ class _DetailsScreenState extends State<DetailsScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(
-                            widget.name,
-                            style: Theme.of(context).textTheme.headlineSmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
+                          Center(
+                            child: Text(
+                              widget.name,
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.headlineSmall
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
                           ),
                           const SizedBox(height: 16),
                           Row(
@@ -145,28 +146,31 @@ class _DetailsScreenState extends State<DetailsScreen> {
                               Text(
                                 '${widget.latitude}, ${widget.longitude}',
                                 style: Theme.of(context).textTheme.titleMedium,
+                                textAlign: TextAlign.center,
                               ),
                             ],
                           ),
                           const SizedBox(height: 16),
-                          InkWell(
-                            onTap: () {
-                              final url =
-                                  'https://www.google.com/maps/search/?api=1&query=${widget.latitude},${widget.longitude}';
-                              launcher.launchUrl(
-                                Uri.parse(url),
-                                mode: launcher.LaunchMode.externalApplication,
-                              );
-                            },
-                            child: Text(
-                              'Ver no Maps',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.primary,
-                                decoration: TextDecoration.underline,
+                          Center(
+                            child: InkWell(
+                              onTap: () {
+                                final url =
+                                    'https://www.google.com/maps/search/?api=1&query=${widget.latitude},${widget.longitude}';
+                                launcher.launchUrl(
+                                  Uri.parse(url),
+                                  mode: launcher.LaunchMode.externalApplication,
+                                );
+                              },
+                              child: Text(
+                                'Ver no Maps',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.primary,
+                                  decoration: TextDecoration.underline,
+                                ),
+                                textAlign: TextAlign.center,
                               ),
-                              textAlign: TextAlign.center,
                             ),
                           ),
                           if (_spotDetails != null &&
@@ -176,6 +180,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                               'Nomes em outros idiomas',
                               style: Theme.of(context).textTheme.titleLarge
                                   ?.copyWith(fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 16),
                             ..._buildTranslations(_spotDetails),
@@ -184,13 +189,130 @@ class _DetailsScreenState extends State<DetailsScreen> {
                           Text(
                             _spotDetails?['description'] ?? '',
                             style: Theme.of(context).textTheme.bodyLarge,
+                            textAlign: TextAlign.center,
                           ),
+                          if (_spotDetails != null) ...[
+                            const SizedBox(height: 24),
+
+                            // Endereço
+                            if (_hasAddress(_spotDetails!)) ...[
+                              Text(
+                                'Endereço',
+                                style: Theme.of(context).textTheme.titleLarge
+                                    ?.copyWith(fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                _buildAddress(_spotDetails!),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 16),
+                            ],
+
+                            // Horário de Funcionamento
+                            if (_spotDetails!['opening_hours'] != null) ...[
+                              Text(
+                                'Horário de Funcionamento',
+                                style: Theme.of(context).textTheme.titleLarge
+                                    ?.copyWith(fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                _spotDetails!['opening_hours'],
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 16),
+                            ],
+
+                            // Website
+                            if (_spotDetails!['website'] != null ||
+                                _spotDetails!['contact:website'] != null) ...[
+                              Text(
+                                'Website',
+                                style: Theme.of(context).textTheme.titleLarge
+                                    ?.copyWith(fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 8),
+                              InkWell(
+                                onTap: () {
+                                  final url =
+                                      _spotDetails!['website'] ??
+                                      _spotDetails!['contact:website'];
+                                  launcher.launchUrl(
+                                    Uri.parse(url),
+                                    mode:
+                                        launcher.LaunchMode.externalApplication,
+                                  );
+                                },
+                                child: Text(
+                                  _spotDetails!['website'] ??
+                                      _spotDetails!['contact:website'] ??
+                                      '',
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                            ],
+
+                            // Telefone
+                            if (_spotDetails!['phone'] != null ||
+                                _spotDetails!['contact:phone'] != null) ...[
+                              Text(
+                                'Telefone',
+                                style: Theme.of(context).textTheme.titleLarge
+                                    ?.copyWith(fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                _spotDetails!['phone'] ??
+                                    _spotDetails!['contact:phone'] ??
+                                    '',
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 16),
+                            ],
+
+                            // Acessibilidade
+                            if (_hasAccessibilityInfo(_spotDetails!)) ...[
+                              Text(
+                                'Acessibilidade',
+                                style: Theme.of(context).textTheme.titleLarge
+                                    ?.copyWith(fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 8),
+                              ..._buildAccessibilityInfo(_spotDetails!),
+                              const SizedBox(height: 16),
+                            ],
+
+                            // Informações Adicionais
+                            if (_hasAdditionalInfo(_spotDetails!)) ...[
+                              Text(
+                                'Informações Adicionais',
+                                style: Theme.of(context).textTheme.titleLarge
+                                    ?.copyWith(fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 8),
+                              ..._buildAdditionalInfo(_spotDetails!),
+                            ],
+                          ],
                         ],
                       ),
                     ),
                   ),
                 ],
               ),
+      ),
       bottomNavigationBar: const CustomFooter(),
       floatingActionButton: FutureBuilder<bool>(
         future: favoritesProvider.isFavorite(widget.id),
@@ -249,15 +371,14 @@ class _DetailsScreenState extends State<DetailsScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 4),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     languageFlags[lang]!,
                     style: const TextStyle(fontSize: 24),
                   ),
                   const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(value, style: const TextStyle(fontSize: 16)),
-                  ),
+                  Text(value, style: const TextStyle(fontSize: 16)),
                 ],
               ),
             ),
@@ -267,5 +388,142 @@ class _DetailsScreenState extends State<DetailsScreen> {
     });
 
     return translations;
+  }
+
+  bool _hasAddress(Map<String, dynamic> tags) {
+    return tags['addr:street'] != null ||
+        tags['addr:housenumber'] != null ||
+        tags['addr:postcode'] != null ||
+        tags['addr:city'] != null;
+  }
+
+  String _buildAddress(Map<String, dynamic> tags) {
+    final parts = <String>[];
+
+    if (tags['addr:street'] != null) {
+      parts.add(tags['addr:street']);
+      if (tags['addr:housenumber'] != null) {
+        parts.add(tags['addr:housenumber']);
+      }
+    }
+
+    if (tags['addr:postcode'] != null) {
+      parts.add(tags['addr:postcode']);
+    }
+
+    if (tags['addr:city'] != null) {
+      parts.add(tags['addr:city']);
+    }
+
+    return parts.join(', ');
+  }
+
+  bool _hasAccessibilityInfo(Map<String, dynamic> tags) {
+    return tags['wheelchair'] != null ||
+        tags['wheelchair:description'] != null ||
+        tags['tactile_paving'] != null;
+  }
+
+  List<Widget> _buildAccessibilityInfo(Map<String, dynamic> tags) {
+    final info = <Widget>[];
+
+    if (tags['wheelchair'] != null) {
+      info.add(
+        Text(
+          'Acesso para cadeirantes: ${_translateWheelchair(tags["wheelchair"])}',
+          textAlign: TextAlign.center,
+        ),
+      );
+    }
+
+    if (tags['wheelchair:description'] != null) {
+      info.add(const SizedBox(height: 4));
+      info.add(
+        Text(
+          'Detalhes: ${tags["wheelchair:description"]}',
+          textAlign: TextAlign.center,
+        ),
+      );
+    }
+
+    if (tags['tactile_paving'] != null) {
+      info.add(const SizedBox(height: 4));
+      info.add(
+        Text(
+          'Piso tátil: ${tags["tactile_paving"] == "yes" ? "Sim" : "Não"}',
+          textAlign: TextAlign.center,
+        ),
+      );
+    }
+
+    return info;
+  }
+
+  String _translateWheelchair(String value) {
+    switch (value) {
+      case 'yes':
+        return 'Acessível';
+      case 'limited':
+        return 'Parcialmente acessível';
+      case 'no':
+        return 'Não acessível';
+      default:
+        return 'Não informado';
+    }
+  }
+
+  bool _hasAdditionalInfo(Map<String, dynamic> tags) {
+    return tags['fee'] != null ||
+        tags['payment:*'] != null ||
+        tags['internet_access'] != null ||
+        tags['cuisine'] != null;
+  }
+
+  List<Widget> _buildAdditionalInfo(Map<String, dynamic> tags) {
+    final info = <Widget>[];
+
+    if (tags['fee'] != null) {
+      info.add(
+        Text(
+          'Entrada: ${tags["fee"] == "yes" ? "Paga" : "Gratuita"}',
+          textAlign: TextAlign.center,
+        ),
+      );
+    }
+
+    if (tags['internet_access'] != null) {
+      info.add(const SizedBox(height: 4));
+      info.add(
+        Text(
+          'Wi-Fi: ${_translateInternetAccess(tags["internet_access"])}',
+          textAlign: TextAlign.center,
+        ),
+      );
+    }
+
+    if (tags['cuisine'] != null) {
+      info.add(const SizedBox(height: 4));
+      info.add(
+        Text(
+          'Culinária: ${tags["cuisine"]}',
+          textAlign: TextAlign.center,
+        ),
+      );
+    }
+
+    return info;
+  }
+
+  String _translateInternetAccess(String value) {
+    switch (value) {
+      case 'yes':
+        return 'Disponível';
+      case 'no':
+        return 'Não disponível';
+      case 'wlan':
+        return 'Wi-Fi disponível';
+      default:
+        return value;
+    }
   }
 }

@@ -17,7 +17,7 @@ class CustomFooter extends StatelessWidget {
             children: [
               SizedBox(height: 24),
               Text(
-                '© 2024 BrasaTour',
+                '© 2025 BrasaTour',
                 style: TextStyle(color: Colors.white, fontSize: 12),
               ),
               Text(

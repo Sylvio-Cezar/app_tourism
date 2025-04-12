@@ -74,6 +74,7 @@ flutter:
   assets:
     - assets/logo.png
     - assets/placeholder.png
+    - assets/states/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
